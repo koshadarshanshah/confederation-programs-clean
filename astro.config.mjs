@@ -9,17 +9,25 @@ import tailwindcss from "@tailwindcss/vite";
  * - Vite as the build tool
  * - Tailwind CSS integration via Vite plugin
  * - Static site generation (default mode)
- * - Reduced minification for readable output
+ * - Disabled minification for human-readable output
  * 
  * @see https://astro.build/config
  */
 export default defineConfig({
+  compressHTML: false,
   vite: {
     plugins: [tailwindcss()],
     build: {
-      // Reduce minification to keep code more readable
-      minify: 'esbuild',
-      target: 'es2020'
+      // Disable minification completely for readable output
+      minify: false,
+      target: 'es2020',
+      rollupOptions: {
+        output: {
+          // Keep function names and formatting
+          compact: false,
+          indent: '  '
+        }
+      }
     }
   },
 });
