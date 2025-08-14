@@ -20,7 +20,10 @@ npm run build
 
 ## Deployment
 
-Hosted on GitHub Pages with automatic builds. Will update with live URL once deployed.
+**Live Site:** https://koshadarshanshah.github.io/confederation-programs-clean/
+**Repository:** https://github.com/koshadarshanshah/confederation-programs-clean
+
+Hosted on GitHub Pages with automatic builds via GitHub Actions.
 
 ## Time Spent
 
