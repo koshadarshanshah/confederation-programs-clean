@@ -14,6 +14,8 @@ import tailwindcss from "@tailwindcss/vite";
  * @see https://astro.build/config
  */
 export default defineConfig({
+  site: 'https://koshadarshanshah.github.io',
+  base: '/confederation-programs-clean',
   compressHTML: false,
   vite: {
     plugins: [tailwindcss()],

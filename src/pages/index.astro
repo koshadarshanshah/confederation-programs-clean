@@ -52,7 +52,8 @@ import Layout from "@/layouts/Layout.astro";
       try {
         // Fetch the program data from the JSON file
         console.log('Loading program data...');
-        const response = await fetch('./program-data.json');
+        const baseUrl = document.querySelector('meta[name="base-url"]')?.content || '';
+        const response = await fetch(`${baseUrl}program-data.json`);
         
         // Check if the request was successful
         if (!response.ok) {
