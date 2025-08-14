@@ -1,0 +1,17 @@
+{
+  "name": "confederation-programs",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@fontsource-variable/outfit": "^5.2.5",
+    "@tailwindcss/vite": "^4.0.17",
+    "astro": "^5.12.8",
+    "tailwindcss": "^4.0.17"
+  }
+}
