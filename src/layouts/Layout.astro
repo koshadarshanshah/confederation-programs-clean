@@ -1,23 +1,38 @@
 ---
-// Supports weights 100-900
+// Import Outfit font family (supports weights 100-900) for brand consistency
 import "@fontsource-variable/outfit";
+
+// Import global CSS styles including Tailwind and custom CC brand colors
 import "@styles/global.css";
 
+// Import the footer component for consistent site structure
 import Footer from "@components/Footer.astro";
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
+    <!-- Basic meta tags for proper HTML5 document -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
+    
+    <!-- Favicon and site icons -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    
+    <!-- Astro generator meta tag -->
     <meta name="generator" content={Astro.generator} />
-    <meta name="author" content="Mike Koval, https://koval.dev" />
+    
+    <!-- Author information -->
+    <meta name="author" content="Kosha Shah" />
+    
+    <!-- Page title -->
     <title>Confederation College Programs</title>
   </head>
   <body>
+    <!-- Main content slot where page content will be injected -->
     <slot />
+    
+    <!-- Site footer component -->
     <Footer />
   </body>
 </html>

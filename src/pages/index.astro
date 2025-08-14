@@ -1,99 +1,160 @@
 ---
+// Import the main layout component for consistent page structure
 import Layout from "@/layouts/Layout.astro";
 ---
 
 <Layout>
+  <!-- Main container with responsive max width -->
   <div class="max-w-6xl mx-auto py-12 px-4">
+    
+    <!-- Page header with title and description -->
     <header class="text-center mb-12">
-      <h1 class="text-h1 text-accent mb-4">Confederation College Programs</h1>
+      <h1 class="text-h1 text-accent mb-4">
+        Confederation College Programs
+      </h1>
       <p class="text-lead text-dark/80 max-w-3xl mx-auto">
         Explore our comprehensive range of programs designed to prepare you for success in your chosen career path.
       </p>
     </header>
 
+    <!-- Grid container for program cards - responsive columns -->
     <div id="programs-container" class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-      <!-- Programs will be loaded here via JavaScript -->
+      <!-- Program cards will be dynamically inserted here -->
     </div>
 
+    <!-- Loading state indicator -->
     <div id="loading" class="text-center py-12">
-      <p class="text-p text-dark/60">Loading programs...</p>
+      <p class="text-p text-dark/60">
+        Loading programs...
+      </p>
     </div>
 
+    <!-- Error state indicator (hidden by default) -->
     <div id="error" class="text-center py-12 hidden">
-      <p class="text-p text-red-600">Unable to load programs. Please try again later.</p>
+      <p class="text-p text-red-600">
+        Unable to load programs. Please try again later.
+      </p>
     </div>
+    
   </div>
 
   <script>
-    // Load program data at runtime
-    async function loadPrograms() {
+    /**
+     * Main function to load and display program data
+     * Fetches the JSON file and handles any errors gracefully
+     */
+    async function loadProgramData() {
+      // Show loading state while we fetch data
+      const loadingElement = document.getElementById('loading');
+      const errorElement = document.getElementById('error');
+      const programsContainer = document.getElementById('programs-container');
+
       try {
+        // Fetch the program data from the JSON file
+        console.log('Loading program data...');
         const response = await fetch('/program-data.json');
+        
+        // Check if the request was successful
         if (!response.ok) {
-          throw new Error('Failed to fetch program data');
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
-        const programs = await response.json();
+
+        // Parse the JSON response
+        const programData = await response.json();
+        console.log(`Successfully loaded ${programData.length} programs`);
         
-        // Hide loading indicator
-        document.getElementById('loading').style.display = 'none';
+        // Hide the loading indicator since we're done loading
+        loadingElement.style.display = 'none';
         
-        // Render programs
-        renderPrograms(programs);
-      } catch (error) {
-        console.error('Error loading programs:', error);
-        document.getElementById('loading').style.display = 'none';
-        document.getElementById('error').classList.remove('hidden');
+        // Render all the program cards
+        displayProgramList(programData);
+
+      } catch (fetchError) {
+        // Something went wrong - log the error and show user-friendly message
+        console.error('Failed to load program data:', fetchError);
+        
+        loadingElement.style.display = 'none';
+        errorElement.classList.remove('hidden');
       }
     }
 
-    function renderPrograms(programs) {
-      const container = document.getElementById('programs-container');
+    /**
+     * Takes an array of programs and creates a card for each one
+     * @param {Array} programList - Array of program objects from JSON
+     */
+    function displayProgramList(programList) {
+      const containerElement = document.getElementById('programs-container');
       
-      programs.forEach(program => {
-        const programCard = createProgramCard(program);
-        container.appendChild(programCard);
+      // Loop through each program and create a visual card
+      programList.forEach(function(programInfo) {
+        const cardElement = buildProgramCard(programInfo);
+        containerElement.appendChild(cardElement);
       });
     }
 
-    function createProgramCard(program) {
-      const card = document.createElement('div');
-      card.className = 'bg-white border border-dark/10 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow duration-200';
+    /**
+     * Creates a single program card with title, description, and link
+     * @param {Object} programInfo - Individual program data object
+     * @returns {HTMLElement} - Complete card DOM element
+     */
+    function buildProgramCard(programInfo) {
+      // Create the main card container
+      const cardContainer = document.createElement('div');
+      cardContainer.className = 'bg-white border border-dark/10 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow duration-200';
       
-      // Program name
-      const title = document.createElement('h2');
-      title.className = 'text-h3 text-accent mb-3';
-      title.textContent = program.name;
+      // Program title section
+      const titleElement = document.createElement('h2');
+      titleElement.className = 'text-h3 text-accent mb-3';
+      titleElement.textContent = programInfo.name;
       
-      // Mission statement with fallback
-      const mission = document.createElement('p');
-      mission.className = 'text-p text-dark/80 mb-4 line-clamp-4';
-      mission.textContent = program.missionStatement || 'No description yet.';
+      // Program description section
+      const descriptionElement = document.createElement('p');
+      descriptionElement.className = 'text-p text-dark/80 mb-4 line-clamp-4';
       
-      // Program link
-      const link = document.createElement('a');
-      link.href = `https://www.confederationcollege.ca/programs/${program.slug.current}`;
-      link.target = '_blank';
-      link.rel = 'noopener noreferrer';
-      link.className = 'inline-flex items-center text-accent hover:text-accent-yellow transition-colors duration-200 font-medium';
-      link.innerHTML = `
+      // Handle case where mission statement might be null or empty
+      if (programInfo.missionStatement && programInfo.missionStatement.trim() !== '') {
+        descriptionElement.textContent = programInfo.missionStatement;
+      } else {
+        descriptionElement.textContent = 'No description yet.';
+      }
+      
+      // Create the "View Program Details" link
+      const programLink = document.createElement('a');
+      programLink.href = `https://www.confederationcollege.ca/programs/${programInfo.slug.current}`;
+      programLink.target = '_blank';
+      programLink.rel = 'noopener noreferrer';
+      programLink.className = 'inline-flex items-center text-accent hover:text-accent-yellow transition-colors duration-200 font-medium';
+      
+      // Add link text and external link icon
+      programLink.innerHTML = `
         View Program Details
         <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14">
+          </path>
         </svg>
       `;
       
-      card.appendChild(title);
-      card.appendChild(mission);
-      card.appendChild(link);
+      // Assemble the complete card
+      cardContainer.appendChild(titleElement);
+      cardContainer.appendChild(descriptionElement);
+      cardContainer.appendChild(programLink);
       
-      return card;
+      return cardContainer;
     }
 
-    // Load programs when the page loads
-    document.addEventListener('DOMContentLoaded', loadPrograms);
+    // Wait for the page to fully load, then fetch and display programs
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('Page loaded, initializing program display...');
+      loadProgramData();
+    });
   </script>
 
   <style>
+    /* 
+     * Text truncation utility for mission statements
+     * Limits text to 4 lines max to keep card heights consistent
+     */
     .line-clamp-4 {
       display: -webkit-box;
       -webkit-line-clamp: 4;
